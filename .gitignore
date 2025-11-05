@@ -93,3 +93,11 @@ lerna-debug.log
 Thumbs.db
  
 venv
+venv/
+**/venv/
+**/__pycache__/
+pyvenv.cfg
+*.db
+*.sqlite3
+*.pyc
+Lab_5/venv/
