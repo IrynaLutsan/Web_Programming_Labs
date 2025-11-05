@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shoes list</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Shoes list</h1>
+    <input type="text" id="searchInput" placeholder="Search...">
+    <div class="actions">
+      <a href="{{ url_for('create') }}"><button>Додати нове взуття</button></a>
+      <button id="editBtn" disabled>Редагувати вибране</button>
+      <button id="deleteBtn" disabled>Видалити вибране</button>
+    </div>
+    <table id="shoesTable">
+      <thead>
+        <tr>
+          <th>Choise</th>
+          <th onclick="sortTable(1)">Producer</th>
+          <th onclick="sortTable(2)">Price</th>
+          <th onclick="sortTable(3)">Size</th>
+          <th onclick="sortTable(4)">Color</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <p id="totalPrice">Total price: 0 grn</p>
+  </div>
+  
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <p id="confirmMessage">You shoure wanna del?</p>
+      <button id="confirmYes">Yes</button>
+      <button id="confirmNo">No</button>
+    </div>
+  </div>
+
+<script type="module" src="{{ url_for('static', filename='js/shoe.model.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/view.js') }}"></script>
+
+</body>
+</html>

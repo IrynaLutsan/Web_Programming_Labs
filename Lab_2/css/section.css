@@ -1,0 +1,200 @@
+.cta-image {
+    display: flex;
+    align-items: center;
+    padding: 60px 0;
+  }
+  
+  .cta-content {
+    flex: 1;
+    padding-left: 80px;
+  }
+  
+  .cta-image-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .cta-image-right img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  .cta-content h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 48px;
+    letter-spacing: 0px;
+    color:#091133;
+
+  }
+
+  .cta-content h2{
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 48px;
+    letter-spacing: 0px;
+    color:#091133;
+  }
+  
+  .cta-content p {
+    color: #6F7CB2;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    font-family: Roboto;
+    font-weight: 400;
+    max-width: 500px;
+    font-size: 16px;
+    line-height: 26px;
+    letter-spacing: 0px;
+
+  }
+  
+  .features {
+    display: flex;
+    gap: 40px;
+  }
+  
+  .feature {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 200px;
+  }
+  
+  .feature img {
+  display: block;        
+  margin-bottom: 10px;   
+  max-width: 300px;      
+}
+
+.feature h3 {
+  margin-top: 0;        
+  margin-bottom: 5px; 
+  font-family: Roboto;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 26px;
+  letter-spacing: 0px;   
+}
+
+.feature p {
+  margin-top: 0;
+  color: #5D6970;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0px;
+}
+
+  .pricing {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 170px;
+    padding: 60px 80px;
+  }
+  
+  .pricing-card {
+    flex: 1;
+    max-width: 280px;
+    text-align: left;
+  }
+  
+  .price {
+    font-size: 30px;
+    font-weight: 500;
+    color: #37447E;
+
+    margin-bottom: 10px;
+  }
+  
+  .feature button {
+    margin-top: 15px;
+    padding: 8px 20px;
+    width: 200px;
+    border: none;
+    background-color: #111B47;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  @media (min-width: 2560px) {
+    .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    }
+  }
+
+  @media (max-width: 700px) {
+  .cta-image{
+    padding: 10px 0;
+    flex-direction: column;
+    align-items: center;
+  }
+  .cta-image-right {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    width: 80%;   
+  }
+  .cta-image-right img {
+    max-width: 80%;
+    height: auto;
+  }
+
+  .cta-content {
+    flex: 1 1 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    max-width: 319px;
+  }
+
+  .cta-content h1,
+  .cta-content h2 {
+    font-size: 22px;
+    line-height: 30px;
+  }
+
+  .cta-content p {
+    font-size: 14px;
+    line-height: 22px;
+    margin-bottom: 20px;
+  }
+
+  .features {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .feature {
+    max-width: 100%;
+  }
+
+  .pricing {
+    flex-direction: column;
+    gap: 40px;
+    padding: 10%;
+  }
+  .price{
+    margin-left: 5px;
+  }
+  .feature{
+    margin-left: 5px;
+  }
+  .pricing-card {
+    max-width: 100%;
+    text-align: center;
+  }
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit shoes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+  <div class="container">
+    <h1>Edit shoes</h1>
+
+    <form id="editForm">
+      <label>producer:</label>
+      <input type="text" name="producer">
+
+      <label>price:</label>
+      <input type="number" name="price">
+
+      <label>size:</label>
+      <input type="number" name="size">
+
+      <label>color:</label>
+      <input type="text" name="color">
+
+      <button type="submit">Save</button>
+    </form>
+
+    <a href="/"><button>Back</button></a>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <p id="modalMessage"></p>
+    </div>
+  </div>
+  
+<script type="module" src="{{ url_for('static', filename='js/edit.js') }}"></script>
+
+
+</body>
+</html>

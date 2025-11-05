@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shoes list</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Shoes list</h1>
+    <input type="text" id="searchInput" placeholder="Пошук..." onkeyup="filterTable()">
+    <table id="shoesTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">Producer</th>
+          <th onclick="sortTable(1)">Prise</th>
+          <th onclick="sortTable(2)">Size</th>
+          <th onclick="sortTable(3)">Color</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+    <p id="totalPrice">Total price: 0 grn</p>
+  </div>
+  <script src="js/shoes.js"></script>
+  <script src="js/view.js"></script>
+</body>
+</html>
