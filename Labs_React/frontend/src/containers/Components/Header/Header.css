@@ -94,3 +94,54 @@
     font-size: 14px;
   }
 }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.search-bar input {
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  background-color: transparent;
+  color: inherit; /* Для підтримки світлої/темної теми */
+}
+
+.search-bar .search-btn {
+  background: none;
+  border: none;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-icon {
+  font-size: 20px; /* Збільшимо іконку */
+}
+
+.cart-icon a {
+  text-decoration: none;
+}
+
+/* Адаптація для мобільних */
+@media (max-width: 768px) {
+  .header-actions {
+    /* На мобільних ховаємо пошук та іконку
+       (вони залишаються в мобільному меню) */
+    display: none;
+  }
+}

@@ -1,0 +1,16 @@
+.secondary-button {
+  padding: 8px 18px; /* Трохи менша за PrimaryButton */
+  font-size: 14px;
+  font-weight: 500;
+  color: #333; /* Темний текст */
+  background-color: #ffffff; /* Білий фон */
+  border: 1px solid #ccc; /* Сіра рамка */
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+  background-color: #f4f4f4; /* Ледь сірий фон при наведенні */
+  border-color: #aaa;
+}

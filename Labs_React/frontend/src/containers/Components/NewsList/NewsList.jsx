@@ -29,9 +29,15 @@ function NewsList() {
     fetchFeaturedNews(); 
   }, []);
 
+  const handleViewMore = () => {
+    // Тут можна додати логіку для завантаження більше новин
+    // або переходу на сторінку з усіма новинами
+    console.log('View more clicked');
+  };
+
   if (loading) {
     return (
-      <section className="news-list"> {/* Змінено класс */}
+      <section className="news-list">
         <div className="container">
           <h2 className="section-title">New Arrivals</h2>
           <div className="loading">Loading...</div>
@@ -42,7 +48,7 @@ function NewsList() {
 
   if (error) {
     return (
-      <section className="news-list"> {/* Змінено класс */}
+      <section className="news-list">
         <div className="container">
           <h2 className="section-title">New Arrivals</h2>
           <div className="error">Error: {error}</div>
@@ -51,7 +57,7 @@ function NewsList() {
     );
   }
 
-return (
+  return (
     <section className="news-list">
       <div className="container">
         <h2 className="section-title">New Arrivals</h2>
@@ -65,9 +71,12 @@ return (
             />
           ))}
         </div>
+        <button className="view-more-btn" onClick={handleViewMore}>
+          View More
+        </button>
       </div>
     </section>
   );
 }
 
-export default NewsList; 
+export default NewsList;

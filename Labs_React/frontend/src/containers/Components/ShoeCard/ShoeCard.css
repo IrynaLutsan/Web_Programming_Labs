@@ -1,0 +1,71 @@
+.shoe-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.shoe-image-container {
+  width: 100%;
+  padding-top: 100%; /* Створює квадратний контейнер для зображення */
+  position: relative;
+  background-color: #f4f4f4;
+}
+
+.shoe-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Масштабує зображення, щоб воно заповнило блок */
+}
+
+.shoe-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Дозволяє цьому блоку рости, щоб заповнити місце */
+}
+
+.shoe-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #222;
+  margin: 0 0 8px 0;
+}
+
+.shoe-description {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 16px;
+  flex-grow: 1; /* "Відштовхує" ціну і кнопку вниз */
+}
+
+.shoe-price-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.shoe-price-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.shoe-price-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+}
+
+.shoe-card.selected {
+  border-color: #007bff; /* Яскраво-синя рамка */
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.25); /* Тінь в колір рамки */
+  transform: scale(1.02); /* Трохи збільшити */
+}
