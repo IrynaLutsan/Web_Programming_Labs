@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; 
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import './NewsList.css'; 
 
@@ -6,6 +6,7 @@ function NewsList() {
   const [featuredNews, setFeaturedNews] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(3); 
 
   useEffect(() => {
     const fetchFeaturedNews = async () => { 
@@ -29,10 +30,13 @@ function NewsList() {
     fetchFeaturedNews(); 
   }, []);
 
+  // логіка для кнопки "View More"
   const handleViewMore = () => {
-    // Тут можна додати логіку для завантаження більше новин
-    // або переходу на сторінку з усіма новинами
-    console.log('View more clicked');
+    const step = 3; 
+    const totalItems = featuredNews.length; 
+    
+    // оновлюєм стан збільшуючи на 3, але обмежуємо загальною кількістю
+    setVisibleCount(prevCount => Math.min(prevCount + step, totalItems));
   };
 
   if (loading) {
@@ -62,18 +66,24 @@ function NewsList() {
       <div className="container">
         <h2 className="section-title">New Arrivals</h2>
         <div className="news-grid">
-          {featuredNews.map(newsItem => ( 
-            <ProductCard
-              key={newsItem.id}
-              image={newsItem.image}
-              title={newsItem.title}
-              type="news" 
-            />
-          ))}
+          {featuredNews
+            .slice(0, visibleCount) 
+            .map(newsItem => ( 
+              <ProductCard
+                key={newsItem.id}
+                image={newsItem.image}
+                title={newsItem.title}
+                type="news" 
+              />
+            ))}
         </div>
-        <button className="view-more-btn" onClick={handleViewMore}>
-          View More
-        </button>
+        
+        {visibleCount < featuredNews.length && (    // УМОВНИЙ РЕНДЕРИНГ КНОПКИ
+          <button className="view-more-btn" onClick={handleViewMore}>
+            View More
+          </button>
+        )}
+        
       </div>
     </section>
   );

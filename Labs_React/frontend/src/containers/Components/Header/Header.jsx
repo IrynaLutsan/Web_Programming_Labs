@@ -38,13 +38,6 @@ function Header() {
         </nav>
         
         <div className="header-actions">
-          <div className="search-bar">
-            <input type="text" placeholder="Search..." />
-            <button type="submit" className="search-btn">
-              {/* Проста іконка лупи */}
-              &#128269; 
-            </button>
-          </div>
           
           <div className="cart-icon">
             <Link to="/cart">

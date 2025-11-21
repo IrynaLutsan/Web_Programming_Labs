@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// useNavigate - хук для програмної навігації (переходу на іншу сторінку)
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, useParams } from 'react-router-dom'; 
 import PrimaryButton from '../containers/Components/ui/PrimaryButton';
 import SecondaryButton from '../containers/Components/ui/SecondaryButton';
 
@@ -38,51 +37,84 @@ const buttonGroupStyles = {
 
 
 function ShoeFormPage() {
-  // Створюємо 'навігатор'
   const navigate = useNavigate();
+  // Читаєм ID з URL та визначаємо режим
+  const { id } = useParams(); 
+  const isEditMode = !!id; 
 
-  // Створюємо стан для кожного поля форми
   const [producer, setProducer] = useState('');
   const [price, setPrice] = useState('');
   const [size, setSize] = useState('');
   const [color, setColor] = useState('');
-  const [error, setError] = useState(null); // Для показу помилок
+  const [error, setError] = useState(null); 
 
-  // Функція, що викликається при відправці форми
+  // Завантаження даних для редагування
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchShoeData = async () => {
+        try {
+          const response = await axios.get(`/api/shoes/${id}`);
+          const data = response.data;
+          
+          setProducer(data.producer);
+          setPrice(data.price);
+          setSize(data.size);
+          setColor(data.color);
+
+        } catch (err) {
+          setError(`Помилка завантаження даних: ${err.message}. Перенаправлення...`);
+          console.error("Помилка завантаження:", err);
+          setTimeout(() => navigate('/catalog'), 2000); 
+        }
+      };
+      fetchShoeData();
+    }
+  }, [id, isEditMode, navigate]); 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault(); 
+    setError(null);
 
     if (!producer || !price || !size || !color) {
       setError('Будь ласка, заповніть усі поля');
       return;
     }
     
-    const newShoe = {
+    const shoeData = {
       producer: producer.trim(),
       price: parseFloat(price),
       size: parseInt(size),
       color: color.trim(),
     };
+    
+    const url = isEditMode ? `/api/shoes/${id}` : '/api/shoes';
+    const method = isEditMode ? 'put' : 'post';
+    const successMessage = isEditMode ? 'Товар успішно оновлено!' : 'Товар успішно додано!';
+
 
     try {
-      await axios.post('/api/shoes', newShoe);
-      alert('Товар успішно додано!');
+      await axios({
+        method: method,
+        url: url,
+        data: shoeData
+      });
+      
+      alert(successMessage);
       navigate('/catalog');
 
     } catch (err) {
       setError(err.message);
-      console.error("Помилка додавання товару:", err);
+      console.error("Помилка відправлення форми:", err);
     }
   };
 
   return (
     <div style={formContainerStyles}>
-      <h2>Додати нове взуття</h2>
+      <h2>{isEditMode ? 'Редагувати Взуття' : 'Додати нове взуття'}</h2>
       
-      {/* 'onSubmit' прив'язує нашу функцію до форми */}
       <form onSubmit={handleSubmit}>
         
-        {/* Поле Producer */}
         <div style={formGroupStyles}>
           <label style={labelStyles} htmlFor="producer">Виробник:</label>
           <input
@@ -94,7 +126,6 @@ function ShoeFormPage() {
           />
         </div>
 
-        {/* Поле Price */}
         <div style={formGroupStyles}>
           <label style={labelStyles} htmlFor="price">Ціна:</label>
           <input
@@ -106,7 +137,6 @@ function ShoeFormPage() {
           />
         </div>
 
-        {/* Поле Size */}
         <div style={formGroupStyles}>
           <label style={labelStyles} htmlFor="size">Розмір:</label>
           <input
@@ -118,7 +148,6 @@ function ShoeFormPage() {
           />
         </div>
 
-        {/* Поле Color */}
         <div style={formGroupStyles}>
           <label style={labelStyles} htmlFor="color">Колір:</label>
           <input
@@ -130,12 +159,12 @@ function ShoeFormPage() {
           />
         </div>
 
-        {/* 8. Показ помилок валідації */}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p style={{ color: 'red' }}>Помилка: {error}</p>}
 
-        {/* 9. Кнопки */}
         <div style={buttonGroupStyles}>
-          <PrimaryButton type="submit">Зберегти</PrimaryButton>
+          <PrimaryButton type="submit">
+            {isEditMode ? 'Зберегти зміни' : 'Додати'}
+          </PrimaryButton>
           <SecondaryButton type="button" onClick={() => navigate('/catalog')}>
             Скасувати
           </SecondaryButton>

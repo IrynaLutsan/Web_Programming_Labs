@@ -19,6 +19,7 @@ function App() {
           <Route path="/catalog" element={<CatalogPage />} />
           <Route path="/catalog/new" element={<ShoeFormPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route path="/catalog/edit/:id" element={<ShoeFormPage />} />
         </Routes>
       </main>
 

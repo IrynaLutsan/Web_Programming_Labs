@@ -100,18 +100,17 @@ function ProductDetailPage() {
     fetchProduct();
   }, [id]); // [id] - означає "виконати цей ефект, якщо 'id' в URL змінився"
 
-  // Логіка вибору зображення (така сама, як у ShoeCard)
+  // логіка вибору зображення (така сама, як ShoeCard)
   const getImageUrl = (producerName) => {
     return producerImages[producerName.toLowerCase().trim()] || defaultShoeImage;
   };
 
   if (loading) return <p>Завантаження товару...</p>;
   if (error) return <p>Сталася помилка: {error}</p>;
-  if (!product) return <p>Товар не знайдено.</p>; // Якщо API повернуло 404
+  if (!product) return <p>Товар не знайдено.</p>; // якщо API повернуло 404
 
   return (
     <div style={detailContainerStyles}>
-      {/* Ліва колонка: Зображення */}
       <div style={imageContainerStyles}>
         <img 
           src={getImageUrl(product.producer)} 
@@ -120,7 +119,6 @@ function ProductDetailPage() {
         />
       </div>
 
-      {/* Права колонка: Інформація */}
       <div style={infoContainerStyles}>
         <h1 style={titleStyles}>
           {product.producer} (Size: {product.size} / Color: {product.color})
@@ -131,8 +129,6 @@ function ProductDetailPage() {
           nulla sit amet, commmodo ligula eget dolor. Aenean massa. 
           Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
         </p>
-
-        {/* (Тут можна додати поля "Countable" та "Selectable" з макету) */}
 
         <p style={priceStyles}>
           Price: ${product.price}

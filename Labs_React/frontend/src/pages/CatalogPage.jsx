@@ -5,7 +5,6 @@ import SecondaryButton from '../containers/Components/ui/SecondaryButton';
 import PrimaryButton from '../containers/Components/ui/PrimaryButton'; 
 import { Link } from 'react-router-dom';
 
-// Стилі для СІТКИ (Grid)
 const gridStyles = {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
@@ -13,7 +12,6 @@ const gridStyles = {
   padding: '20px 0'
 };
 
-// Стилі для панелі фільтрів
 const filterBarStyles = {
   display: 'flex',
   flexWrap: 'wrap',
@@ -22,7 +20,6 @@ const filterBarStyles = {
   padding: '10px 0'
 };
 
-// Стилі для адмін-панелі
 const adminPanelStyles = {
   padding: '15px',
   backgroundColor: '#f4f4f4',
@@ -40,15 +37,24 @@ function CatalogPage() {
   const [selectedId, setSelectedId] = useState(null);
   const [isEditDisabled, setIsEditDisabled] = useState(true);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(true);
+  const [searchTerm, setSearchTerm] = useState(''); 
+  const [selectedColor, setSelectedColor] = useState('All'); 
+  const [selectedProducer, setSelectedProducer] = useState('All'); 
   
   useEffect(() => {
     setIsEditDisabled(selectedId === null);
     setIsDeleteDisabled(selectedId === null);
   }, [selectedId]);
 
+  // Обробник зміни фільтра кольору
+  const handleColorChange = (e) => {
+    setSelectedColor(e.target.value);
+  };
+ 
+  const handleProducerChange = (e) => {
+    setSelectedProducer(e.target.value);
+  };
 
-  // 1. Ми винесемо 'fetchProducts' з 'useEffect', 
-  //    щоб мати можливість викликати її повторно
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -63,32 +69,23 @@ function CatalogPage() {
     }
   };
 
-  // 2. useEffect тепер просто викликає 'fetchProducts' при першому завантаженні
   useEffect(() => {
     fetchProducts();
-  }, []); // [] - виконати 1 раз при завантаженні
+  }, []);
 
   
-  // 3. НОВА ФУНКЦІЯ: Логіка видалення
   const handleDelete = async () => {
-    // Перевірка, чи щось обрано
     if (!selectedId) {
       alert("Будь ласка, оберіть товар для видалення.");
       return;
     }
 
-    // 4. Запитуємо підтвердження
     if (window.confirm('Ви впевнені, що хочете видалити цей товар?')) {
       try {
-        // 5. Робимо запит до API на видалення
         await axios.delete(`/api/shoes/${selectedId}`);
-        
-        // 6. Скидаємо вибір
         setSelectedId(null);
-        
-        // 7. ОНОВЛЮЄМО список, завантаживши його знову
         alert('Товар успішно видалено!');
-        fetchProducts(); // Викликаємо завантаження даних
+        fetchProducts(); 
         
       } catch (err) {
         console.error("Помилка видалення:", err);
@@ -96,6 +93,29 @@ function CatalogPage() {
       }
     }
   };
+
+  // Отримуємо унікальні кольори та бренди
+  const allColors = [...new Set(products.map(p => p.color))].sort();
+  const allProducers = [...new Set(products.map(p => p.producer))].sort();
+
+  const filteredProducts = products.filter(product => {
+    
+    const colorFilterPassed = selectedColor === 'All' || product.color === selectedColor;
+    const producerFilterPassed = selectedProducer === 'All' || product.producer === selectedProducer;
+    
+    if (!(colorFilterPassed && producerFilterPassed)) return false; 
+
+    const query = searchTerm.toLowerCase().trim();
+    if (query === '') return true;
+
+    // Логіка текстового пошуку
+    const producerMatch = product.producer.toLowerCase().includes(query);
+    const colorMatch = product.color.toLowerCase().includes(query);
+    const priceMatch = String(product.price).includes(query);
+    const sizeMatch = String(product.size).includes(query);
+
+    return producerMatch || colorMatch || priceMatch || sizeMatch;
+  });
 
 
   if (loading) return <p>Завантаження товарів...</p>;
@@ -107,16 +127,21 @@ function CatalogPage() {
       <h2>Наш Каталог</h2>
 
       <div style={adminPanelStyles}>
-        {/* 1. ЗАМІНЮЄМО PrimaryButton НА <Link> */}
         <Link to="/catalog/new" style={{ textDecoration: 'none' }}>
-          <PrimaryButton as="span"> {/* 'as="span"' змусить кнопку вести себе як блок */}
+          <PrimaryButton as="span"> 
             Додати Взуття
           </PrimaryButton>
         </Link>
         
-        <SecondaryButton disabled={isEditDisabled}>
-          Редагувати Обране
-        </SecondaryButton>
+        <Link 
+          to={`/catalog/edit/${selectedId}`} 
+          style={{ textDecoration: 'none' }}
+        >
+          <SecondaryButton as="span" disabled={isEditDisabled}>
+            Редагувати Обране
+          </SecondaryButton>
+        </Link>
+        
         <SecondaryButton 
           disabled={isDeleteDisabled}
           style={!isDeleteDisabled ? {backgroundColor: '#ffdddd', borderColor: '#ff5555', color: '#d00'} : {}}
@@ -126,25 +151,52 @@ function CatalogPage() {
         </SecondaryButton>
       </div>
 
-      {/* ... (решта вашого JSX-коду: фільтри, hr, .map()) ... */}
-
       <div style={filterBarStyles}>
-        {/* ... */}
+        <input 
+          type="text"
+          placeholder="Пошук за виробником, кольором, ціною..."
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)} 
+          style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', flexGrow: 1 }}
+        />
+        
+        <select 
+          value={selectedColor} 
+          onChange={handleColorChange}
+          style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+        >
+          <option value="All">All Colors</option>
+          {allColors.map(color => (
+            <option key={color} value={color}>{color}</option>
+          ))}
+        </select>
+        
+        <select 
+          value={selectedProducer} 
+          onChange={handleProducerChange}
+          style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+        >
+          <option value="All">All Brands</option>
+          {allProducers.map(producer => (
+            <option key={producer} value={producer}>{producer}</option>
+          ))}
+        </select>
+        
       </div>
       <hr />
 
       <div style={gridStyles}>
-        {products.map(product => (
+        {filteredProducts.map(product => (
           <ShoeCard 
             key={product.id} 
             product={product}
             onSelect={() => {
-              // Додамо логіку "зняття виділення", якщо клікнути на ту саму картку
               setSelectedId(prevId => prevId === product.id ? null : product.id);
             }}
             isSelected={product.id === selectedId}
           />
         ))}
+        {filteredProducts.length === 0 && <p>За вашим запитом нічого не знайдено.</p>}
       </div>
     </div>
   );

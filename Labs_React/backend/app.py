@@ -193,6 +193,18 @@ def add_mock_data():
             FeaturedNews(  
                 image="src/assets/img3.jpeg",
                 title="Style Spotlight"
+            ),
+            FeaturedNews(
+                image="src/assets/Nike.jpg",
+                title="New Nike Collection" 
+            ),
+            FeaturedNews(
+                image="src/assets/Adidas.jpg",
+                title="Limited Edition Adidas" 
+            ),
+            FeaturedNews(
+                image="src/assets/Newbalance.jpg",
+                title="Comfortable New Balance" 
             )
         ]
         
@@ -204,10 +216,9 @@ def add_mock_data():
 
 # --- Запуск сервера ---
 if __name__ == '__main__':
-    # Створюємо таблиці, якщо їх ще немає
     with app.app_context():
         db.create_all()
-        add_mock_data()  # Додаємо початкові дані
+        add_mock_data()  
     
     # Запускаємо Flask-сервер
     app.run(port=5001, debug=True)
