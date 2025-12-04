@@ -69,9 +69,21 @@ def add_shoe():
 # READ (Отримати всі взуття)
 @app.route('/api/shoes', methods=['GET'])
 def get_shoes():
-    shoes = Shoe.query.all()
-    return jsonify([shoe.to_dict() for shoe in shoes])
+    # считування параметрів з URL (URL Query Parameters)
+    producer_filter = request.args.get('producer')
+    color_filter = request.args.get('color')
+    
+    query = Shoe.query
 
+    if producer_filter:
+        query = query.filter(Shoe.producer.ilike(f'%{producer_filter}%'))
+
+    if color_filter:
+        query = query.filter(Shoe.color.ilike(f'%{color_filter}%'))
+
+    shoes = query.all()
+    
+    return jsonify([shoe.to_dict() for shoe in shoes])
 # READ (Отримати одне взуття)
 @app.route('/api/shoes/<int:id>', methods=['GET'])
 def get_shoe(id):

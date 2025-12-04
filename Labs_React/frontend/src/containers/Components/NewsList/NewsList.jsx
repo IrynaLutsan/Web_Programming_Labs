@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'; 
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import './NewsList.css'; 
+import { fetchFeaturedNews } from '../../../api/shoesApi'; // Шлях до API-сервісу
+import Loader from '../Loader/Loader.jsx'; // 👈 Loader тут!
 
 function NewsList() { 
   const [featuredNews, setFeaturedNews] = useState([]); 
@@ -9,15 +11,11 @@ function NewsList() {
   const [visibleCount, setVisibleCount] = useState(3); 
 
   useEffect(() => {
-    const fetchFeaturedNews = async () => { 
+    const fetchNews = async () => { 
       try {
-        const response = await fetch('http://localhost:5001/api/featured-news'); 
+        setLoading(true);
+        const data = await fetchFeaturedNews(); 
         
-        if (!response.ok) {
-          throw new Error('Failed to fetch featured news'); 
-        }
-        
-        const data = await response.json();
         setFeaturedNews(data); 
       } catch (err) {
         setError(err.message);
@@ -27,24 +25,23 @@ function NewsList() {
       }
     };
 
-    fetchFeaturedNews(); 
-  }, []);
+    fetchNews(); 
+  }, []); 
 
   // логіка для кнопки "View More"
   const handleViewMore = () => {
     const step = 3; 
     const totalItems = featuredNews.length; 
-    
-    // оновлюєм стан збільшуючи на 3, але обмежуємо загальною кількістю
     setVisibleCount(prevCount => Math.min(prevCount + step, totalItems));
   };
 
+  // УМОВНИЙ РЕНДЕРИНГ: відображаємо Loader
   if (loading) {
     return (
       <section className="news-list">
         <div className="container">
           <h2 className="section-title">New Arrivals</h2>
-          <div className="loading">Loading...</div>
+          <Loader /> 
         </div>
       </section>
     );
@@ -55,7 +52,7 @@ function NewsList() {
       <section className="news-list">
         <div className="container">
           <h2 className="section-title">New Arrivals</h2>
-          <div className="error">Error: {error}</div>
+          <p style={{ color: 'red' }}>Помилка: {error}</p>
         </div>
       </section>
     );
@@ -78,7 +75,7 @@ function NewsList() {
             ))}
         </div>
         
-        {visibleCount < featuredNews.length && (    // УМОВНИЙ РЕНДЕРИНГ КНОПКИ
+        {visibleCount < featuredNews.length && (
           <button className="view-more-btn" onClick={handleViewMore}>
             View More
           </button>

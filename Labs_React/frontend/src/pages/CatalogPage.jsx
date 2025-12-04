@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import ShoeCard from '../containers/Components/ShoeCard/ShoeCard';
 import SecondaryButton from '../containers/Components/ui/SecondaryButton';
 import PrimaryButton from '../containers/Components/ui/PrimaryButton'; 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; 
+import { fetchShoes, deleteShoe } from '../api/shoesApi'; 
+import Loader from '../containers/Components/Loader/Loader.jsx'; 
 
 const gridStyles = {
   display: 'grid',
@@ -31,6 +32,7 @@ const adminPanelStyles = {
 };
 
 function CatalogPage() {
+  const navigate = useNavigate(); 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,12 +57,24 @@ function CatalogPage() {
     setSelectedProducer(e.target.value);
   };
 
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  // GET з фільтрами
   const fetchProducts = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get('/api/shoes');
-      setProducts(response.data);
+      
+      // Створення об'єкта фільтрів для передачі як URL-параметрів (GET)
+      const filters = {
+        producer: selectedProducer !== 'All' ? selectedProducer : undefined,
+        color: selectedColor !== 'All' ? selectedColor : undefined,
+      };
+
+      // API-сервіс fetchShoes(filters)
+      const data = await fetchShoes(filters); 
+      await delay(700);
+      setProducts(data);
     } catch (err) {
       setError(err.message);
       console.error("Помилка завантаження взуття:", err);
@@ -69,11 +83,12 @@ function CatalogPage() {
     }
   };
 
+  // викликає fetchProducts при зміні фільтрів
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [selectedProducer, selectedColor]); 
 
-  
+
   const handleDelete = async () => {
     if (!selectedId) {
       alert("Будь ласка, оберіть товар для видалення.");
@@ -82,10 +97,12 @@ function CatalogPage() {
 
     if (window.confirm('Ви впевнені, що хочете видалити цей товар?')) {
       try {
-        await axios.delete(`/api/shoes/${selectedId}`);
+        // API-сервіс deleteShoe(id)
+        await deleteShoe(selectedId); 
+        
         setSelectedId(null);
         alert('Товар успішно видалено!');
-        fetchProducts(); 
+        fetchProducts(); // Перезавантаження списоку
         
       } catch (err) {
         console.error("Помилка видалення:", err);
@@ -94,21 +111,12 @@ function CatalogPage() {
     }
   };
 
-  // Отримуємо унікальні кольори та бренди
-  const allColors = [...new Set(products.map(p => p.color))].sort();
-  const allProducers = [...new Set(products.map(p => p.producer))].sort();
-
   const filteredProducts = products.filter(product => {
     
-    const colorFilterPassed = selectedColor === 'All' || product.color === selectedColor;
-    const producerFilterPassed = selectedProducer === 'All' || product.producer === selectedProducer;
-    
-    if (!(colorFilterPassed && producerFilterPassed)) return false; 
-
     const query = searchTerm.toLowerCase().trim();
     if (query === '') return true;
 
-    // Логіка текстового пошуку
+    // текстовий пошук
     const producerMatch = product.producer.toLowerCase().includes(query);
     const colorMatch = product.color.toLowerCase().includes(query);
     const priceMatch = String(product.price).includes(query);
@@ -118,7 +126,7 @@ function CatalogPage() {
   });
 
 
-  if (loading) return <p>Завантаження товарів...</p>;
+  if (loading) return <Loader />; 
   if (error) return <p>Сталася помилка: {error}</p>;
 
 
@@ -166,7 +174,7 @@ function CatalogPage() {
           style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
         >
           <option value="All">All Colors</option>
-          {allColors.map(color => (
+          {products.map(p => p.color).filter((v, i, a) => a.indexOf(v) === i).sort().map(color => (
             <option key={color} value={color}>{color}</option>
           ))}
         </select>
@@ -177,7 +185,7 @@ function CatalogPage() {
           style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
         >
           <option value="All">All Brands</option>
-          {allProducers.map(producer => (
+          {products.map(p => p.producer).filter((v, i, a) => a.indexOf(v) === i).sort().map(producer => (
             <option key={producer} value={producer}>{producer}</option>
           ))}
         </select>

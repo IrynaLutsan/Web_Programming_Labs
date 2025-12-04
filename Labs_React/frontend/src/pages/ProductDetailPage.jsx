@@ -1,146 +1,140 @@
 import React, { useState, useEffect } from 'react';
-
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { fetchShoeById } from '../api/shoesApi'; 
+import Loader from '../containers/Components/Loader/Loader.jsx'; 
+
 import PrimaryButton from '../containers/Components/ui/PrimaryButton';
 import SecondaryButton from '../containers/Components/ui/SecondaryButton';
 
-import nikeImage from '../assets/nike.jpg';
-import adidasImage from '../assets/adidas.jpg';
-import asicsImage from '../assets/asics.jpg';
-import converseImage from '../assets/converse.jpg';
-import newbalanceImage from '../assets/newbalance.jpg';
-import pumaImage from '../assets/puma.jpg';
-import salomonImage from '../assets/salomon.jpg';
-import defaultShoeImage from '../assets/shoes_store.jpg';
+import Adidas from '../assets/Adidas.jpg';
+import Asics from '../assets/Asics.jpg';
+import Converse from '../assets/Converse.jpg';
+import Newbalance from '../assets/Newbalance.jpg';
+import Nike from '../assets/Nike.jpg';
+import Puma from '../assets/Puma.jpg';
+import Salomon from '../assets/Salomon.jpg';
+import DefaultImage from '../assets/shoes_store.jpg';
 
-const producerImages = {
-  'nike': nikeImage, 'adidas': adidasImage, 'asics': asicsImage,
-  'converse': converseImage, 'newbalance': newbalanceImage, 'puma': pumaImage,
-  'salomon': salomonImage, 'testnike': nikeImage, 
-};
 
-const detailContainerStyles = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '40px',
-  maxWidth: '1000px',
-  margin: '40px auto',
-  padding: '20px',
-};
-
-const imageContainerStyles = {
-  width: '100%',
-  backgroundColor: '#f4f4f4',
-  borderRadius: '8px',
-  padding: '20px',
-};
-
-const imageStyles = {
-  width: '100%',
-  height: 'auto',
-  objectFit: 'contain',
-};
-
-const infoContainerStyles = {
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const titleStyles = {
-  fontSize: '32px',
-  fontWeight: 'bold',
-  margin: '0 0 15px 0',
-};
-
-const descriptionStyles = {
-  fontSize: '16px',
-  color: '#555',
-  lineHeight: '1.6',
-  marginBottom: '20px',
-};
-
-const priceStyles = {
-  fontSize: '28px',
-  fontWeight: 'bold',
-  margin: 'auto 0 20px 0', 
-};
-
-const buttonGroupStyles = {
-  display: 'flex',
-  gap: '15px',
+const sharedStyles = {
+    mainContainer: {
+        display: 'flex',
+        gap: '40px',
+        padding: '40px 0',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        backgroundColor: '#fff',
+    },
+    imageContainer: {
+        flex: '1',
+        minWidth: '400px',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+        borderRadius: '10px',
+        overflow: 'hidden',
+    },
+    image: {
+        width: '100%',
+        height: 'auto',
+        objectFit: 'cover',
+    },
+    details: {
+        flex: '1',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
+    action: {
+        marginTop: '30px',
+        display: 'flex',
+        gap: '15px',
+        alignItems: 'center',
+    },
+    price: {
+        fontSize: '2.5em',
+        fontWeight: 'bold',
+        color: '#333',
+        margin: '10px 0',
+    }
 };
 
 
 function ProductDetailPage() {
-  // 5. Отримуємо 'id' з URL (напр., /product/123 -> id = '123')
   const { id } = useParams(); 
-  const navigate = useNavigate(); // Для кнопки "Go back"
+  const navigate = useNavigate(); 
 
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setLoading(true);
+        setLoading(true); 
         setError(null);
-        // 6. Робимо запит до API, використовуючи 'id' з URL
-        const response = await axios.get(`/api/shoes/${id}`);
-        setProduct(response.data);
+        
+        const data = await fetchShoeById(id);
+        setProduct(data);
+
       } catch (err) {
-        setError(err.message);
-        console.error(`Помилка завантаження товару ${id}:`, err);
+        if (err.response && err.response.status === 404) {
+             setError('Товар не знайдено.');
+        } else {
+             setError(`Помилка завантаження даних: ${err.message}`);
+             console.error(`Помилка завантаження товару ${id}:`, err);
+        }
       } finally {
-        setLoading(false);
+        setLoading(false); 
       }
     };
 
     fetchProduct();
-  }, [id]); // [id] - означає "виконати цей ефект, якщо 'id' в URL змінився"
+  }, [id]); 
 
-  // логіка вибору зображення (така сама, як ShoeCard)
+  // Логіка вибору зображення
   const getImageUrl = (producerName) => {
-    return producerImages[producerName.toLowerCase().trim()] || defaultShoeImage;
+    switch (producerName?.toLowerCase()) {
+      case 'nike': return Nike;
+      case 'adidas': return Adidas;
+      case 'puma': return Puma;
+      case 'new balance': return Newbalance;
+      case 'converse': return Converse;
+      case 'asics': return Asics;
+      case 'salomon': return Salomon;
+      default: return DefaultImage;
+    }
   };
 
-  if (loading) return <p>Завантаження товару...</p>;
-  if (error) return <p>Сталася помилка: {error}</p>;
-  if (!product) return <p>Товар не знайдено.</p>; // якщо API повернуло 404
+  // УМОВНИЙ РЕНДЕРИНГ
+  if (loading) return <Loader />;
+  if (error) return <p style={{ padding: '20px', textAlign: 'center', color: 'red' }}>Сталася помилка: {error}</p>;
+  if (!product) return <p style={{ padding: '20px', textAlign: 'center' }}>Товар не знайдено.</p>;
 
+  // Якщо товар успішно завантажено, відображаємо його
   return (
-    <div style={detailContainerStyles}>
-      <div style={imageContainerStyles}>
-        <img 
-          src={getImageUrl(product.producer)} 
-          alt={product.producer} 
-          style={imageStyles} 
-        />
+    <div style={sharedStyles.mainContainer}>
+      <div style={sharedStyles.imageContainer}>
+        <img src={getImageUrl(product.producer)} alt={product.producer} style={sharedStyles.image} />
       </div>
-
-      <div style={infoContainerStyles}>
-        <h1 style={titleStyles}>
-          {product.producer} (Size: {product.size} / Color: {product.color})
-        </h1>
+      <div style={sharedStyles.details}>
+        <h1>{product.producer} {product.color} Sneaker</h1>
+        <p style={{ fontSize: '1.2em', color: '#666' }}>
+          **Size:** {product.size} | **Color:** {product.color}
+        </p>
+        <div style={sharedStyles.price}>${product.price.toFixed(2)}</div>
         
-        <p style={descriptionStyles}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc maximus, 
-          nulla sit amet, commmodo ligula eget dolor. Aenean massa. 
-          Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+        <p>
+            Це детальний опис товару, який може бути розширений. 
+            Наразі він імітує реальний контент для демонстрації.
+            Це взуття ідеально підходить для **{product.producer}** ентузіастів.
         </p>
 
-        <p style={priceStyles}>
-          Price: ${product.price}
-        </p>
-
-        <div style={buttonGroupStyles}>
-          <SecondaryButton onClick={() => navigate('/catalog')}>
-            Go back
-          </SecondaryButton>
-          <PrimaryButton onClick={() => alert('Додано в кошик!')}>
-            Add to cart
+        <div style={sharedStyles.action}>
+          <PrimaryButton>
+            Купити зараз
           </PrimaryButton>
+          <SecondaryButton onClick={() => navigate('/catalog')}>
+            Повернутися до каталогу
+          </SecondaryButton>
         </div>
       </div>
     </div>

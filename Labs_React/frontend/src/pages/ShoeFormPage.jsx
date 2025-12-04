@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom'; 
 import PrimaryButton from '../containers/Components/ui/PrimaryButton';
 import SecondaryButton from '../containers/Components/ui/SecondaryButton';
+import { fetchShoeById, createShoe, updateShoe } from '../api/shoesApi'; 
+
 
 const formContainerStyles = {
   maxWidth: '600px',
@@ -48,17 +49,17 @@ function ShoeFormPage() {
   const [color, setColor] = useState('');
   const [error, setError] = useState(null); 
 
-  // Завантаження даних для редагування
+  // Завантаження даних для редагування (GET)
   useEffect(() => {
     if (isEditMode) {
       const fetchShoeData = async () => {
         try {
-          const response = await axios.get(`/api/shoes/${id}`);
-          const data = response.data;
+          // виклик API: fetchShoeById
+          const data = await fetchShoeById(id);
           
           setProducer(data.producer);
-          setPrice(data.price);
-          setSize(data.size);
+          setPrice(String(data.price));
+          setSize(String(data.size));
           setColor(data.color);
 
         } catch (err) {
@@ -72,6 +73,7 @@ function ShoeFormPage() {
   }, [id, isEditMode, navigate]); 
 
 
+  // Обробка відправки форми (POST або PUT)
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     setError(null);
@@ -81,6 +83,7 @@ function ShoeFormPage() {
       return;
     }
     
+    // Перетворення даних форми у потрібний для API формат
     const shoeData = {
       producer: producer.trim(),
       price: parseFloat(price),
@@ -88,20 +91,19 @@ function ShoeFormPage() {
       color: color.trim(),
     };
     
-    const url = isEditMode ? `/api/shoes/${id}` : '/api/shoes';
-    const method = isEditMode ? 'put' : 'post';
     const successMessage = isEditMode ? 'Товар успішно оновлено!' : 'Товар успішно додано!';
 
 
     try {
-      await axios({
-        method: method,
-        url: url,
-        data: shoeData
-      });
+        // виклик API: PUT для редагування, POST для створення
+        if (isEditMode) {
+            await updateShoe(id, shoeData); 
+        } else {
+            await createShoe(shoeData);   
+        }
       
-      alert(successMessage);
-      navigate('/catalog');
+        alert(successMessage);
+        navigate('/catalog');
 
     } catch (err) {
       setError(err.message);
