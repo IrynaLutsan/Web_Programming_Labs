@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../redux/actions';
 import { fetchShoeById } from '../api/shoesApi'; 
 import Loader from '../containers/Components/Loader/Loader.jsx'; 
-
 import PrimaryButton from '../containers/Components/ui/PrimaryButton';
 import SecondaryButton from '../containers/Components/ui/SecondaryButton';
 
@@ -61,6 +62,7 @@ const sharedStyles = {
 function ProductDetailPage() {
   const { id } = useParams(); 
   const navigate = useNavigate(); 
+  const dispatch = useDispatch();   //дозволяє компонентам React "спілкуватися" з Redux Store
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true); 
@@ -129,9 +131,12 @@ function ProductDetailPage() {
         </p>
 
         <div style={sharedStyles.action}>
-          <PrimaryButton>
+          <PrimaryButton onClick={() => { dispatch(addToCart(product));
+            alert('Товар додано в кошик!'); 
+          }}>
             Купити зараз
           </PrimaryButton>
+
           <SecondaryButton onClick={() => navigate('/catalog')}>
             Повернутися до каталогу
           </SecondaryButton>

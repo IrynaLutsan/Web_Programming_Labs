@@ -73,7 +73,7 @@ function CatalogPage() {
 
       // API-сервіс fetchShoes(filters)
       const data = await fetchShoes(filters); 
-      await delay(700);
+      await delay(400);
       setProducts(data);
     } catch (err) {
       setError(err.message);
